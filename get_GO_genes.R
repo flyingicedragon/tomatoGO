@@ -1,7 +1,7 @@
 library(tidyverse)
 library(clusterProfiler)
 
-go_enricher <- function(gene_list, sample_name) {
+go_enricher <- function(gene_list, sample_name = "GO") {
   ## import annotation data
   go_annotation <- read_csv("tomato_go.csv")
   go_annotation <- split(go_annotation, with(go_annotation, level))
@@ -47,12 +47,7 @@ go_enricher <- function(gene_list, sample_name) {
   return(go_result)
 }
 
-read_genes <- function(filename) {
-  gene_list <- read.csv(filename)[, 1:2]
-  gene_list[, 1] <- str_sub(gene_list[, 1], 1, 14)
-  return(gene_list)
-}
-
+## get GO genes
 get_genes <- function(go_result) {
   type_vector <- c(
       "biological_process",
@@ -81,23 +76,8 @@ get_genes <- function(go_result) {
   return(go_result)
 }
 
-get_go_genes <- function(example_name) {
-  gene_list <- read_genes(paste0(example_name, ".csv"))
+get_go_genes <- function(gene_list, example_name) {
   gene_go <- go_enricher(gene_list, example_name) %>%
     get_genes()
-  gene_go <- merge(
-    gene_go,
-    gene_list,
-    by.x = "geneID",
-    by.y = "Accession",
-    all.x = T
-  )
-  names(gene_go) <- c(
-    "gene",
-    "GO ID",
-    "GO term",
-    "type",
-    "description"
-  )
-  write.csv(gene_go, paste0(example_name, "_go.csv"), row.names = F)
+  return(gene_go)
 }
