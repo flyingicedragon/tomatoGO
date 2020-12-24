@@ -3,9 +3,9 @@ library(clusterProfiler)
 
 go_enricher <- function(gene_list, sample_name) {
   ## import annotation data
-  go_annotation <- read_csv("tomato_go.csv")
+  go_annotation <- read_csv("/home/icedragon/DocumentsNotSync/git/tomatoGO/tomato_go.csv")
   go_annotation <- split(go_annotation, with(go_annotation, level))
-  go_info <- read_tsv("go-basic.tb")
+  go_info <- read_tsv("/home/icedragon/DocumentsNotSync/git/tomatoGO/go-basic.tb")
   type_vector <- c(
     "biological_process",
     "cellular_component",
@@ -29,9 +29,9 @@ go_enricher <- function(gene_list, sample_name) {
   dotplot_save <- function(go_result, go_type) {
     img <- dotplot(go_result, showCategory = 30)
     if (go_type == "molecular_function") {
-      img_width = 12
+      img_width <- 12
     } else {
-      img_width = 8
+      img_width <- 8
     }
     ggsave(
       paste0(sample_name, "_", go_type, ".pdf"),
