@@ -27,7 +27,7 @@ go_enricher <- function(gene_list, sample_name = "GO") {
   }
   ## dot plot
   dotplot_save <- function(go_result, go_type) {
-    img <- dotplot(go_result, showCategory = 30)
+    img <- barplot(go_result, showCategory = 30)
     if (go_type == "molecular_function") {
       img_width <- 12
     } else {
