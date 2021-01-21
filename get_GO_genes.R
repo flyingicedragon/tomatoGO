@@ -14,7 +14,7 @@ go_enricher <- function(gene_list, sample_name = "GO") {
   ## GO analysis
   go_split_enricher <- function(type) {
     go_result_split <- enricher(
-      gene_list[, 1],
+      gene_list,
       pAdjustMethod = "none",
       TERM2GENE = go_annotation[[type]][c(2, 1)],
       TERM2NAME = go_info[1:2]
@@ -27,19 +27,20 @@ go_enricher <- function(gene_list, sample_name = "GO") {
   }
   ## dot plot
   dotplot_save <- function(go_result, go_type) {
-    img <- barplot(go_result, showCategory = 30)
-    if (go_type == "molecular_function") {
-      img_width <- 12
-    } else {
-      img_width <- 8
+    if (!is.null(go_result) && nrow(go_result) != 0) {
+      img <- barplot(go_result, showCategory = 30)
+      if (go_type == "molecular_function") {
+        img_width <- 12
+      } else {
+        img_width <- 8
+      }
+      ggsave(
+        paste0(sample_name, "_", go_type, ".pdf"),
+        plot = img,
+        width = img_width,
+        height = 6
+      )
     }
-    ggsave(
-      paste0(sample_name, "_", go_type, ".pdf"),
-      device = pdf(),
-      plot = img,
-      width = img_width,
-      height = 6
-    )
   }
   for (ii in type_vector) {
     dotplot_save(go_result[[ii]], ii)
