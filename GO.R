@@ -1,5 +1,7 @@
 library(readr)
 library(dplyr)
+library(ggplot2)
+library(tidyr)
 library(this.path)
 library(clusterProfiler)
 
@@ -8,7 +10,7 @@ library(clusterProfiler)
 go_annotation_all <- read_csv(
   here("tomato_go.csv")
 )
-go_annotation <- split(go_annotation_all, with(go_annotation, level))
+go_annotation <- split(go_annotation_all, with(go_annotation_all, level))
 go_info <- read_tsv(
   here("go-basic.tb")
 )
@@ -18,13 +20,13 @@ type_vector <- c(
   "molecular_function"
 )
 
-# GO
+# GO ----
 
 #' @title split GO enricher
 #' @param genes vector to do GO analysis
 #' @param GO types
 #' @return splitted GO enricher
-go_split_enricher <- function(gene_list, type) {
+go_split_enricher <- function(gene_list, type = FALSE) {
   go_result_split <- enricher(
     gene_list,
     pAdjustMethod = "none",
@@ -67,7 +69,12 @@ go_enricher <- function(gene_list, sample_name) {
 #' @param gene_list genes vector
 #' @param sample_name sample name used in result file
 go_enricher_all <- function(gene_list, sample_name) {
-  go_result <- go_split_enricher(gene_list, sample_name)
+  go_result <- enricher(
+    gene_list,
+    pAdjustMethod = "none",
+    TERM2GENE = go_annotation_all[c(2, 1)],
+    TERM2NAME = go_info[1:2]
+  )
   ## bar plot
   barplot_save <- function(go_result) {
     img <- barplot(go_result, showCategory = 30)
