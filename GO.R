@@ -7,8 +7,9 @@ library(clusterProfiler)
 
 # import GO annotation -----
 
-go_annotation_all <- read_csv(
-  here("tomato_go.csv")
+go_annotation_all <- read_tsv(
+  here("tomato_go.tsv"),
+  col_names = c("id", "go", "level")
 )
 go_annotation <- split(go_annotation_all, with(go_annotation_all, level))
 go_info <- read_tsv(
