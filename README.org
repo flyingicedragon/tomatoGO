@@ -1,0 +1,36 @@
+#+title: tomatoGO
+* tomatoGO
+
+** Description
+
+GO analysis for tomato.
+
+** Usage
+
+#+begin_src R
+source("/path/to/GO.R")
+#+end_src
+
+*** go_enrich
+
+GO analysis for per types
+
+#+begin_src R
+go_enrich(gene_list, "sample_name")
+#+end_src
+
+*** go_enrich_all
+
+GO analysis for all types in one picture
+
+#+begin_src R
+go_enrich_all(gene_list, "sample_name")
+#+end_src
+
+*** get_go_genes
+
+get every GO terms genes
+
+#+begin_src R
+get_go_genes(gene_list, "sample_name")
+#+end_src
