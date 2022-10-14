@@ -78,7 +78,7 @@ plot_go <- function(go_result, ...) {
 plot_go_each <- function(go_results, ...) {
   imgs <- list()
   for (go_type in type_vector) {
-    imgs[go_type] <- plot_go(go_results[go_type], ...)
+    imgs[[go_type]] <- plot_go(go_results[[go_type]], ...)
   }
   imgs
 }
@@ -111,7 +111,7 @@ plot_save <- function(img, go_type = "all", path = ".", sample_name = "") {
       ggsave(
         sample_name_one,
         device = pdf(),
-        plot = img,
+        plot = img[[go_type]],
         width = img_width,
         height = 6
       )
@@ -121,45 +121,37 @@ plot_save <- function(img, go_type = "all", path = ".", sample_name = "") {
 
 #' @title get GO genes
 #' @param go_result GO result
-#' @return GO result data matrix
+#' @return GO result data tibble
 get_genes <- function(go_result, all = FALSE) {
-  type_vector <- c(
-    "biological_process",
-    "cellular_component",
-    "molecular_function"
-  )
+  if (all) {
+    go_result <- tibble::as_tibble(go_result) %>%
+      ## select() %>%
+      separate_rows(geneID, sep = "/") %>%
+      as.matrix()
+  } else {
+    get_go_list <- function(go_type_result) {
+      go_type_result <- tibble::as_tibble(go_type_result)
+      go_type_result
+    }
 
-  get_go_list <- function(go_type_result) {
-    go_type_result <- tibble::as_tibble(go_type_result)[, c(1, 2, 8)]
-    return(go_type_result)
+    go_result_list <- list()
+    for (ii in type_vector) {
+      go_result_list[[ii]] <- get_go_list(go_result[[ii]])
+      go_result_list[[ii]] <- go_result_list[[ii]] %>%
+        separate_rows(geneID, sep = "/")
+      go_result_list[[ii]] <- dplyr::mutate(go_result_list[[ii]], type = ii)
+    }
+    go_result <- as.matrix(go_result_list[[1]])
+    go_result <- rbind(
+      go_result,
+      go_result_list[[2]] %>% as.matrix()
+    ) %>%
+      rbind(
+        go_result_list[[3]] %>% as.matrix()
+      )
   }
-
-  go_result_list <- list()
-  for (ii in type_vector) {
-    go_result_list[[ii]] <- get_go_list(go_result[[ii]])
-    go_result_list[[ii]] <- go_result_list[[ii]] %>%
-      separate_rows(geneID, sep = "/")
-    go_result_list[[ii]] <- dplyr::mutate(go_result_list[[ii]], type = ii)
-  }
-  go_result <- as.matrix(go_result_list[[1]])
-  go_result <- rbind(
-    go_result,
-    go_result_list[[2]] %>% as.matrix()
-  ) %>%
-    rbind(
-      go_result_list[[3]] %>% as.matrix()
-    )
+  go_result <- tibble::as_tibble(go_result)
   go_result
-}
-
-#' @title get GO genes
-#' @param gene_list genes list for GO analysis
-#' @param example_name name to used in file
-#' @return tibble containing GO genes
-get_go_genes <- function(gene_list, example_name) {
-  gene_go <- go_enricher(gene_list, example_name) %>%
-    get_genes()
-  gene_go
 }
 
 #' @title get GO results
@@ -177,9 +169,8 @@ get_go_results <- function(result, value = "pvalue") {
 #' @title Export GO result with p-value
 #' @param genes genes vector
 #' @param ... other parameters for get_go_results
-export_go_results <- function(genes, path, ...) {
-  result <- go_enricher_all(genes) %>%
-    get_go_results(genes, ...)
+export_go_results <- function(result_all, path, ...) {
+  result <- get_go_results(result_all, ...)
   write_tsv(
     result,
     path,
@@ -207,6 +198,7 @@ read_revigo <- function(path) {
 #' @title Plot revigo results
 #'
 #' @param result filtered result of revigo
+#' @return ggplot2 object list
 plot_revigo_scatter <- function(result, ...) {
   pic <- list()
   for (item in c(
@@ -221,7 +213,8 @@ plot_revigo_scatter <- function(result, ...) {
 #' @title Plot revigo results per item
 #'
 #' @param result_one one result item
-#' @param condition label show condition
+#' @param top top dispensability number for show
+#' @param ... label show condition
 #'
 #' @return ggplot2 object
 plot_revigo_scatter_one <- function(result_one, top = FALSE, ...) {
