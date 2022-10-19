@@ -1,0 +1,26 @@
+Package: tomatoGO
+Title: Do GO analysis for tomato
+Version: 0.2.0
+Authors@R: 
+     person(given = "Icedragon",
+           family = "Chang",
+           role = c("aut", "cre"),
+           email = "flyingicedragon@outlook.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Do GO analysis mainly for tomato. It contains a tomato GO database.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Imports: 
+    readr,
+    dplyr,
+    ggplot2,
+    tidyr,
+    this.path,
+    gson
+biocViews:
+    clusterProfiler (>= 4.5.2)
+Depends: 
+    R (>= 2.10)
