@@ -19,7 +19,8 @@ Imports:
     ggplot2,
     tidyr,
     this.path,
-    gson
+    gson,
+    rlang
 biocViews:
     clusterProfiler (>= 4.5.2)
 Depends: 

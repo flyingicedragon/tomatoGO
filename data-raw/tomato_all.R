@@ -9,10 +9,12 @@ go_basic <- read.table(
 names(go_basic) <- c("gsid", "name")
 tomato_allgene <- read.table("data-raw/tomato_go.tsv", sep = "\t")
 names(tomato_allgene) <- c("gene", "gsid", "type")
+
 tomato_all <- subset(tomato_allgene, type != "")
 tomato_bp <- subset(tomato_allgene, type == "biological_process")
 tomato_cc <- subset(tomato_allgene, type == "cellular_component")
 tomato_mf <- subset(tomato_allgene, type == "molecular_function")
+
 tomato_all <- gson::gson(
   gsid2gene = tomato_all[, c(2, 1)],
   gsid2name = go_basic,
