@@ -1,6 +1,6 @@
 Package: tomatoGO
 Title: Do GO analysis for tomato
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
      person(given = "Icedragon",
            family = "Chang",
@@ -20,8 +20,8 @@ Imports:
     tidyr,
     this.path,
     gson,
-    rlang
-biocViews:
-    clusterProfiler (>= 4.5.2)
-Depends: 
+    rlang,
+    clusterProfiler
+biocViews: Software, BiologicalQuestion
+Depends:
     R (>= 2.10)
